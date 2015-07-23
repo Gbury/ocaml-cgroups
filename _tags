@@ -1,0 +1,8 @@
+<subsystems/*.cmx>: for-pack(Cgroups)
+<hierarchy/*.cmx>: for-pack(Cgroups)
+<util/*.cmx>: for-pack(Cgroups)
+
+# more warnings
+<**/*.ml>: warn_K, warn_Y, warn_X
+<**/*.cm*>: debug
+
