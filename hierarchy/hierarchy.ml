@@ -1,24 +1,42 @@
 
-type subsystem = string
-
 type t = {
-  mount : string;
-  subs : subsystem list;
   root : cgroup;
+  mount : string;
+  subsystems : string list;
 }
 
 and cgroup = {
   path : string;
-  mutable children : cgroup list;
   hierarchy : t;
+  mutable children : cgroup list;
 }
 
 (* Generating hierarchies *)
+let rec populate stack =
+  match Stack.pop stack with
+  | exception Stack.Empty -> ()
+  | g ->
+    let l = Util.fold_dir (fun s acc ->
+        let f = Filename.concat g.path s in
+        let stats = Unix.stat f in
+        if stats.Unix.st_kind = Unix.S_DIR then begin
+          let cg = {
+            path = f;
+            hierarchy = g.hierarchy;
+            children = [];
+          } in
+          Stack.push cg stack;
+          cg :: acc
+        end else
+          acc) g.path [] in
+    g.children <- l;
+    populate stack
+
 let make path subs =
   let rec t = {
-    mount = path;
-    subs = subs;
     root = root;
+    mount = path;
+    subsystems = subs;
   }
   and root = {
     path = path;
@@ -26,9 +44,12 @@ let make path subs =
     children = []
   }
   in
+  let s = Stack.create () in
+  Stack.push root s;
+  populate s;
   t
 
-let list subsys =
+let find subsys =
   let rec aux ch acc =
     match input_line ch with
     | exception End_of_file -> acc
@@ -43,7 +64,7 @@ let list subsys =
         | _ -> aux ch acc
       end
   in
-  let ch = open_in "/proc/mounts/" in
+  let ch = open_in "/proc/mounts" in
   let res = aux ch [] in
   close_in ch;
   res

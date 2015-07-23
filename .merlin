@@ -1,9 +1,9 @@
-B _build
-B _buid/util
-B _build/hierarchy
-B _build/subsystems
+B _build/
+B _buid/util/
+B _build/hierarchy/
+B _build/subsystems/
 
 S ./
-S ./util
-S ./hierarchy
-S ./subsystems
+S ./util/
+S ./hierarchy/
+S ./subsystems/
