@@ -44,9 +44,9 @@ let int_list_of_string s = List.map int_of_string (Util.split ~seps:[' '] s)
 
 let name = "cpuacct"
 
-let usage = new A.reset_attr name "usage" int_of_string "0"
+let stat = A.get_attr name "stat" stat_of_string
 
-let stat = new A.get_attr name "stat" stat_of_string
+let usage = A.reset_attr name "usage" int_of_string "0"
 
-let usage_percpu = new A.get_attr name "usage_percpu" int_list_of_string
+let usage_percpu = A.get_attr name "usage_percpu" int_list_of_string
 

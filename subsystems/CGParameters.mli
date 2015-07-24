@@ -24,28 +24,13 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-class virtual attr : string -> string ->
-  object
-    method subsystem : string
-  end
+type ('ty, 'kind) attr
 
-class ['a] get_attr : string -> string -> (string -> 'a) ->
-  object
-    method get : string -> 'a
-    method subsystem : string
-  end
+val get_attr : string -> string -> (string -> 'a) -> ('a, [< `Get ]) attr
+val set_attr : string -> string -> (string -> 'a) -> ('a -> string) -> ('a, [< `Get | `Set ]) attr
+val reset_attr : string -> string -> (string -> 'a) -> string -> ('a, [< `Get | `Reset ]) attr
 
-class ['a] reset_attr : string -> string -> (string -> 'a) -> string ->
-  object
-    method get : string -> 'a
-    method reset : string -> unit
-    method subsystem : string
-  end
-
-class ['a] set_attr : string -> string -> (string -> 'a) -> ('a -> string) ->
-  object
-    method get : string -> 'a
-    method set : string -> 'a -> unit
-    method subsystem : string
-  end
+val get : ('a, [> `Get ]) attr -> Hierarchy.cgroup -> 'a
+val set : ('a, [> `Set ]) attr -> Hierarchy.cgroup -> 'a -> unit
+val reset : ('a, [> `Reset ]) attr -> Hierarchy.cgroup -> unit
 

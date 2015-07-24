@@ -31,8 +31,7 @@ type stat = {
 
 val name : string
 
-val stat : stat CGParameters.get_attr
-
-val usage : int CGParameters.reset_attr
-val usage_percpu : int list CGParameters.get_attr
+val stat : (stat, [ `Get ]) CGParameters.attr
+val usage : (int, [ `Get | `Reset ]) CGParameters.attr
+val usage_percpu : (int list, [ `Get ]) CGParameters.attr
 

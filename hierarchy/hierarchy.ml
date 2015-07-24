@@ -41,6 +41,12 @@ let mk_t mount subsystems =
 let mk_cgroup name path hierarchy =
   { name; path; hierarchy; }
 
+(* Access function *)
+let root h = mk_cgroup "" h.mount h
+
+let path g = g.path
+let subsys g = g.hierarchy.subsystems
+
 (* Generating hierarchies *)
 let find_all subsys =
   let rec aux ch acc =
@@ -62,8 +68,6 @@ let find_all subsys =
   close_in ch;
   res
 
-let root h = mk_cgroup "" h.mount h
-
 let children g =
   Util.fold_dir (fun s acc ->
       let f = Filename.concat g.path s in
@@ -74,6 +78,7 @@ let children g =
       end else
         acc) g.path []
 
+(* Modifying hierarchies *)
 let mk_sub parent name =
   let perm = Unix.((stat parent.path).st_perm) in
   let path = Filename.concat parent.path name in

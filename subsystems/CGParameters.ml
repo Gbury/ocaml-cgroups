@@ -24,56 +24,55 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-class virtual attr sub name = object(self)
+type ('ty, 'kind) attr = {
+  name : string;
+  subsystem : string;
 
-  val name = name
-  val subsystem = sub
+  reset_value : string;
+  from_string : string -> 'ty;
+  to_string : 'ty -> string;
+}
 
-  method subsystem = subsystem
+let mk subsystem name from_string
+    ?(reset_value = "") ?(to_string = (fun _ -> "")) () =
+  { name; subsystem; reset_value; from_string; to_string; }
 
-  method private file =
-    Format.asprintf "%s.%s" subsystem name
+(* Attribute creation *)
+let get_attr sub name from_string = mk sub name from_string ()
+let set_attr sub name from_string to_string = mk sub name from_string ~to_string ()
 
-  method private raw_get path =
-    let f = Filename.concat path self#file in
-    let rec aux ch acc =
-      match input_line ch with
-      | exception End_of_file -> acc
-      | s -> aux ch (s :: acc)
-    in
-    let ch = open_in f in
-    let res = String.concat "\n" (List.rev (aux ch [])) in
-    close_in ch;
-    res
+let reset_attr sub name from_string reset_value = mk sub name from_string ~reset_value ()
 
-  method private raw_set path value =
-    let f = Filename.concat path self#file in
-    let ch = open_out f in
-    output_string ch value;
-    close_out ch
-end
+(* Low-level Accessors *)
+let file attr = Format.asprintf "%s.%s" attr.subsystem attr.name
 
-class ['a] get_attr sub name from_string = object
-  inherit attr sub name as super
+let raw_get attr path =
+  let f = Filename.concat path (file attr) in
+  let rec aux ch acc =
+    match input_line ch with
+    | exception End_of_file -> acc
+    | s -> aux ch (s :: acc)
+  in
+  let ch = open_in f in
+  let res = String.concat "\n" (List.rev (aux ch [])) in
+  close_in ch;
+  res
 
-  val convert_to : string -> 'a = from_string
+let raw_set attr path value =
+  let f = Filename.concat path (file attr) in
+  let ch = open_out f in
+  output_string ch value;
+  close_out ch
 
-  method get path = convert_to (super#raw_get path)
-end
+(* High-level accessors *)
+let check attr g = List.mem attr.subsystem (Hierarchy.subsys g)
 
+let get attr g =
+  attr.from_string (raw_get attr (Hierarchy.path g))
 
-class ['a] reset_attr sub name from_string zero = object
-  inherit ['a] get_attr sub name from_string as super
+let set attr g value =
+  raw_set attr (Hierarchy.path g) (attr.to_string value)
 
-  val reset_value = zero
+let reset attr g =
+  raw_set attr (Hierarchy.path g) attr.reset_value
 
-  method reset path = super#raw_set path reset_value
-end
-
-class ['a] set_attr sub name from_string to_string = object
-  inherit ['a] get_attr sub name from_string as super
-
-  val convert_from : 'a -> string = to_string
-
-  method set path value = super#raw_set path (convert_from value)
-end

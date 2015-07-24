@@ -27,6 +27,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 type t
 type cgroup
 
+val root : t -> cgroup
+
+val path : cgroup -> string
+val subsys : cgroup -> string list
+
 val find_all : string list -> t list
 
 val children : cgroup -> cgroup list
