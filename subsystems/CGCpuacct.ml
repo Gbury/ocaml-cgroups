@@ -24,7 +24,29 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val split : seps:(char list) -> string -> string list
+module A = CGParameters
 
-val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+(* Convert functions *)
+type stat = {
+  user : int;
+  system : int;
+}
+
+let stat_of_string s =
+  match List.map (Util.split ~seps:[' ']) (Util.split ~seps:['\n'] s) with
+  | [["user"; u]; ["system"; s]] ->
+    { user = int_of_string u; system = int_of_string s}
+  | _ -> assert false
+
+let int_list_of_string s = List.map int_of_string (Util.split ~seps:[' '] s)
+
+(* Parameters *)
+
+let name = "cpuacct"
+
+let usage = new A.reset_attr name "usage" int_of_string "0"
+
+let stat = new A.get_attr name "stat" stat_of_string
+
+let usage_percpu = new A.get_attr name "usage_percpu" int_list_of_string
 

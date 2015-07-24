@@ -24,7 +24,56 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val split : seps:(char list) -> string -> string list
+class virtual attr sub name = object(self)
 
-val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+  val name = name
+  val subsystem = sub
 
+  method subsystem = subsystem
+
+  method private file =
+    Format.asprintf "%s.%s" subsystem name
+
+  method private raw_get path =
+    let f = Filename.concat path self#file in
+    let rec aux ch acc =
+      match input_line ch with
+      | exception End_of_file -> acc
+      | s -> aux ch (s :: acc)
+    in
+    let ch = open_in f in
+    let res = String.concat "\n" (List.rev (aux ch [])) in
+    close_in ch;
+    res
+
+  method private raw_set path value =
+    let f = Filename.concat path self#file in
+    let ch = open_out f in
+    output_string ch value;
+    close_out ch
+end
+
+class ['a] get_attr sub name from_string = object
+  inherit attr sub name as super
+
+  val convert_to : string -> 'a = from_string
+
+  method get path = convert_to (super#raw_get path)
+end
+
+
+class ['a] reset_attr sub name from_string zero = object
+  inherit ['a] get_attr sub name from_string as super
+
+  val reset_value = zero
+
+  method reset path = super#raw_set path reset_value
+end
+
+class ['a] set_attr sub name from_string to_string = object
+  inherit ['a] get_attr sub name from_string as super
+
+  val convert_from : 'a -> string = to_string
+
+  method set path value = super#raw_set path (convert_from value)
+end

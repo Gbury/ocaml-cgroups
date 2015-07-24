@@ -24,7 +24,28 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val split : seps:(char list) -> string -> string list
+class virtual attr : string -> string ->
+  object
+    method subsystem : string
+  end
 
-val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+class ['a] get_attr : string -> string -> (string -> 'a) ->
+  object
+    method get : string -> 'a
+    method subsystem : string
+  end
+
+class ['a] reset_attr : string -> string -> (string -> 'a) -> string ->
+  object
+    method get : string -> 'a
+    method reset : string -> unit
+    method subsystem : string
+  end
+
+class ['a] set_attr : string -> string -> (string -> 'a) -> ('a -> string) ->
+  object
+    method get : string -> 'a
+    method set : string -> 'a -> unit
+    method subsystem : string
+  end
 

@@ -4,7 +4,7 @@ LOG=build.log
 COMP=ocamlbuild -log $(LOG) -use-ocamlfind -classic-display
 FLAGS=
 DIRS=-Is subsystems,hierarchy,util
-DOC=
+DOC=cgroups.docdir/index.html
 
 NAME=cgroups
 

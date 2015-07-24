@@ -24,7 +24,28 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val split : seps:(char list) -> string -> string list
+type t = {
+  name : string;
+  enabled : bool;
+}
 
-val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+let mk name enabled =
+  { name; enabled; }
+
+(* Access function *)
+let list () =
+  let rec aux ch acc =
+    match input_line ch with
+    | exception End_of_file -> acc
+    | s ->
+      begin match Util.split ~seps:[' '; '\t'] s with
+        | [sub_name; _; _; enabled;] ->
+          aux ch (mk sub_name (enabled = "1") :: acc)
+        | _ -> aux ch acc
+      end
+  in
+  let ch = open_in "/proc/cgroups" in
+  let res = aux ch [] in
+  close_in ch;
+  res
 

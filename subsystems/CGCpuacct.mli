@@ -24,7 +24,15 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val split : seps:(char list) -> string -> string list
+type stat = {
+  user : int;
+  system : int;
+}
 
-val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+val name : string
+
+val stat : stat CGParameters.get_attr
+
+val usage : int CGParameters.reset_attr
+val usage_percpu : int list CGParameters.get_attr
 
