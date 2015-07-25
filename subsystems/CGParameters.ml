@@ -24,7 +24,7 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-type ('ty, 'kind) attr = {
+type ('ty, 'attr) t = {
   name : string;
   subsystem : string;
 
@@ -38,10 +38,11 @@ let mk subsystem name from_string
   { name; subsystem; reset_value; from_string; to_string; }
 
 (* Attribute creation *)
-let get_attr sub name from_string = mk sub name from_string ()
-let set_attr sub name from_string to_string = mk sub name from_string ~to_string ()
+let mk_get sub name from_string = mk sub name from_string ()
 
-let reset_attr sub name from_string reset_value = mk sub name from_string ~reset_value ()
+let mk_set sub name from_string to_string = mk sub name from_string ~to_string ()
+
+let mk_reset sub name from_string reset_value = mk sub name from_string ~reset_value ()
 
 (* Low-level Accessors *)
 let file attr = Format.asprintf "%s.%s" attr.subsystem attr.name

@@ -79,8 +79,7 @@ let children g =
         acc) g.path []
 
 (* Modifying hierarchies *)
-let mk_sub parent name =
-  let perm = Unix.((stat parent.path).st_perm) in
+let mk_sub parent name perm =
   let path = Filename.concat parent.path name in
   Unix.mkdir path perm;
   mk_cgroup name path parent.hierarchy

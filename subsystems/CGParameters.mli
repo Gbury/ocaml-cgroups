@@ -24,13 +24,41 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-type ('ty, 'kind) attr
+(** Defines the parameters of subsystems *)
 
-val get_attr : string -> string -> (string -> 'a) -> ('a, [< `Get ]) attr
-val set_attr : string -> string -> (string -> 'a) -> ('a -> string) -> ('a, [< `Get | `Set ]) attr
-val reset_attr : string -> string -> (string -> 'a) -> string -> ('a, [< `Get | `Reset ]) attr
+(** {2 Parameter type} *)
 
-val get : ('a, [> `Get ]) attr -> Hierarchy.cgroup -> 'a
-val set : ('a, [> `Set ]) attr -> Hierarchy.cgroup -> 'a -> unit
-val reset : ('a, [> `Reset ]) attr -> Hierarchy.cgroup -> unit
+type ('ty, 'attr) t
+(** The type of parameters for subsystems. The ['ty] argument represents
+    the high level type of the value stored in the parameter. The ['attr]
+    type parameter represents the level of access of the parameter, i.e
+    should it be a read-only parameter, can it be set to a specific value ? *)
+
+(** {2 Creating parameters} *)
+
+(** As parameters are stored in system files, they are stored as strings.
+    Thus conversion functions are used to translate the strings to appropriate
+    representations of the values actually stored. *)
+
+val mk_get : string -> string -> (string -> 'a) -> ('a, [ `Get ]) t
+(** [mk_get subsystem name from_string] returns a gettable parameter. *)
+
+val mk_set : string -> string -> (string -> 'a) -> ('a -> string) -> ('a, [ `Get | `Set ]) t
+(** [mk_set subsystem name from_string to_string] returns a settable parameter.
+    Note that a settable parameter is also a gettable parameter. *)
+
+val mk_reset : string -> string -> (string -> 'a) -> string -> ('a, [ `Get | `Reset ]) t
+(** [mk_reset subsystem name from_string reset_value] returns a gettable parameter
+    whose value can be reset by writing [reset_value] in the corresponding file. *)
+
+(** {2 Using parameters} *)
+
+val get : ('a, [> `Get ]) t -> Hierarchy.cgroup -> 'a
+(** Returns the value of the parameter for the given cgroup. *)
+
+val set : ('a, [> `Set ]) t -> Hierarchy.cgroup -> 'a -> unit
+(** Sets the parameter to the given value for the cgroup. *)
+
+val reset : ('a, [> `Reset ]) t -> Hierarchy.cgroup -> unit
+(** Reset the parameter for the given cgroup *)
 

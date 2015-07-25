@@ -24,14 +24,29 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
+(** Parameters for the 'cpuacct' subsystem *)
+
+(** {2 Type definitions} *)
+
 type stat = {
   user : int;
   system : int;
 }
+(** The types of stats for cpu activity. *)
+
+(** {2 Parameters} *)
 
 val name : string
+(** The name of the subsystem *)
 
-val stat : (stat, [ `Get ]) CGParameters.attr
-val usage : (int, [ `Get | `Reset ]) CGParameters.attr
-val usage_percpu : (int list, [ `Get ]) CGParameters.attr
+val stat : (stat, [ `Get ]) CGParameters.t
+(** Parameter: returns the user & system time (in nanoseconds) used by
+    all tasks in a cgroup and its children (recursively). *)
+
+val usage : (int, [ `Get | `Reset ]) CGParameters.t
+(** Parameter: returns the cpu time (in nanoseconds) used by
+    all tasks in a cgroup and its children (recusively). *)
+
+val usage_percpu : (int list, [ `Get ]) CGParameters.t
+(** Parameter: same as [usage] but discriminates between cpus. *)
 

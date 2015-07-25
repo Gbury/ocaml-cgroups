@@ -24,12 +24,15 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-(* Main definitions *)
+(** Module aliases *)
+
+(** {2 Main definitions} *)
+
 module Main = CGSubsystem
 
-(* Parameters definitions *)
 module Param = CGParameters
 
-(* Known subsystems *)
+(** {2 Known subsystems} *)
+
 module Cpuacct = CGCpuacct
 
