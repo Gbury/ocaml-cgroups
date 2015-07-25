@@ -40,14 +40,14 @@ type ('ty, 'attr) t
     Thus conversion functions are used to translate the strings to appropriate
     representations of the values actually stored. *)
 
-val mk_get : string -> string -> (string -> 'a) -> ('a, [ `Get ]) t
+val mk_get : CGSubsystem.t -> string -> (string -> 'a) -> ('a, [ `Get ]) t
 (** [mk_get subsystem name from_string] returns a gettable parameter. *)
 
-val mk_set : string -> string -> (string -> 'a) -> ('a -> string) -> ('a, [ `Get | `Set ]) t
+val mk_set : CGSubsystem.t -> string -> (string -> 'a) -> ('a -> string) -> ('a, [ `Get | `Set ]) t
 (** [mk_set subsystem name from_string to_string] returns a settable parameter.
     Note that a settable parameter is also a gettable parameter. *)
 
-val mk_reset : string -> string -> (string -> 'a) -> string -> ('a, [ `Get | `Reset ]) t
+val mk_reset : CGSubsystem.t -> string -> (string -> 'a) -> string -> ('a, [ `Get | `Reset ]) t
 (** [mk_reset subsystem name from_string reset_value] returns a gettable parameter
     whose value can be reset by writing [reset_value] in the corresponding file. *)
 

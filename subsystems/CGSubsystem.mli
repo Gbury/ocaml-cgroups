@@ -27,7 +27,10 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 type t = private {
   name : string;
   enabled : bool;
+  available : bool;
 }
 
-val list : unit -> t list
+val find : string -> t
+
+val find_all : unit -> t list
 

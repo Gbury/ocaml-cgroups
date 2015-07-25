@@ -36,7 +36,7 @@ type stat = {
 
 (** {2 Parameters} *)
 
-val name : string
+val t : CGSubsystem.t
 (** The name of the subsystem *)
 
 val stat : (stat, [ `Get ]) CGParameters.t

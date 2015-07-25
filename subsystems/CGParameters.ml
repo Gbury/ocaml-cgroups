@@ -24,9 +24,12 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
+exception Subsystem_not_available of CGSubsystem.t
+exception Subsystem_not_attached of CGSubsystem.t * Hierarchy.cgroup
+
 type ('ty, 'attr) t = {
   name : string;
-  subsystem : string;
+  subsystem : CGSubsystem.t;
 
   reset_value : string;
   from_string : string -> 'ty;
@@ -45,7 +48,7 @@ let mk_set sub name from_string to_string = mk sub name from_string ~to_string (
 let mk_reset sub name from_string reset_value = mk sub name from_string ~reset_value ()
 
 (* Low-level Accessors *)
-let file attr = Format.asprintf "%s.%s" attr.subsystem attr.name
+let file t = Format.asprintf "%s.%s" t.subsystem.CGSubsystem.name t.name
 
 let raw_get attr path =
   let f = Filename.concat path (file attr) in
@@ -66,14 +69,18 @@ let raw_set attr path value =
   close_out ch
 
 (* High-level accessors *)
-let check attr g = List.mem attr.subsystem (Hierarchy.subsys g)
+let check t g =
+  if not t.subsystem.CGSubsystem.available then
+    raise (Subsystem_not_available t.subsystem)
+  else if not (List.mem t.subsystem (Hierarchy.subsys g)) then
+    raise (Subsystem_not_attached (t.subsystem, g))
 
-let get attr g =
-  attr.from_string (raw_get attr (Hierarchy.path g))
+let get t g =
+  check t g; t.from_string (raw_get t (Hierarchy.path g))
 
-let set attr g value =
-  raw_set attr (Hierarchy.path g) (attr.to_string value)
+let set t g value =
+  check t g; raw_set t (Hierarchy.path g) (t.to_string value)
 
-let reset attr g =
-  raw_set attr (Hierarchy.path g) attr.reset_value
+let reset t g =
+  check t g; raw_set t (Hierarchy.path g) t.reset_value
 

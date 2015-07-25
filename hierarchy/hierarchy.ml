@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 type t = {
   mount : string;
-  subsystems : string list;
+  subsystems : CGSubsystem.t list;
 }
 
 and cgroup = {
@@ -36,6 +36,7 @@ and cgroup = {
 }
 
 let mk_t mount subsystems =
+  assert (List.for_all (fun s -> s.CGSubsystem.enabled) subsystems);
   { mount; subsystems }
 
 let mk_cgroup name path hierarchy =
@@ -56,7 +57,7 @@ let find_all subsys =
       begin match Util.split ~seps:[' '; '\t'] s with
         | ["cgroup"; path; "cgroup"; opts; _; _] ->
           let l_opts = Util.split ~seps:[','] opts in
-          begin match List.filter (fun x -> List.mem x l_opts) subsys with
+          begin match List.filter (fun x -> List.mem x.CGSubsystem.name l_opts) subsys with
             | [] -> aux ch acc
             | l -> aux ch (mk_t path l :: acc)
           end

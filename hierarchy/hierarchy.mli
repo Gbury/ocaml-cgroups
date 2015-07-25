@@ -45,12 +45,12 @@ val root : t -> cgroup
 val path : cgroup -> string
 (** Returns the filesystem path of a cgroup. *)
 
-val subsys : cgroup -> string list
+val subsys : cgroup -> CGSubsystem.t list
 (** Returns the list of subsystems attached to the hierarchy of a cgroup. *)
 
 (** {2 Manipulating hierarchies} *)
 
-val find_all : string list -> t list
+val find_all : CGSubsystem.t list -> t list
 (** Given a list of subsystems, returns the list of hierarchies that have
     at least one of the subsystems attached. Information on the returned
     hierarchies may be incomplete, i.e if a hierarchy [h] has subsystems ["A"]

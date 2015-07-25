@@ -27,20 +27,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 type t = {
   name : string;
   enabled : bool;
+  available : bool;
 }
 
-let mk name enabled =
-  { name; enabled; }
+let mk_some name enabled =
+  { name; enabled; available = true; }
+
+let mk_none name =
+  { name; enabled = false; available = false; }
 
 (* Access function *)
-let list () =
+let find_all () =
   let rec aux ch acc =
     match input_line ch with
     | exception End_of_file -> acc
     | s ->
       begin match Util.split ~seps:[' '; '\t'] s with
         | [sub_name; _; _; enabled;] ->
-          aux ch (mk sub_name (enabled = "1") :: acc)
+          aux ch (mk_some sub_name (enabled = "1") :: acc)
         | _ -> aux ch acc
       end
   in
@@ -48,4 +52,8 @@ let list () =
   let res = aux ch [] in
   close_in ch;
   res
+
+let find name =
+  try List.find (fun t -> t.name = name) (find_all ())
+  with Not_found -> mk_none name
 
