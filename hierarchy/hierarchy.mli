@@ -50,6 +50,10 @@ val subsys : cgroup -> CGSubsystem.t list
 
 (** {2 Manipulating hierarchies} *)
 
+val find : string -> cgroup option
+(** Takes a string with the format ["subsystem:path/to/cgroup"] and try and
+    return the corresponding cgroup. *)
+
 val find_all : CGSubsystem.t list -> t list
 (** Given a list of subsystems, returns the list of hierarchies that have
     at least one of the subsystems attached. Information on the returned
@@ -68,4 +72,15 @@ val mk_sub : cgroup -> string -> Unix.file_perm -> cgroup
     Note that this function may currently very well raise erros from the
     Unix module if, for instance, the user does not have permission
     to create directories in the cgroup. *)
+
+(** {2 Processes in cgroups} *)
+
+val processes : cgroup -> int list
+(** Returns the list of processids of all processein a cgroup. *)
+
+val add_process : cgroup -> int -> unit
+(** Add a process to a cgroup using its process id. *)
+
+val process_info : int -> cgroup list
+(** Returns the list of cgroups to which the process with given pid belongs. *)
 

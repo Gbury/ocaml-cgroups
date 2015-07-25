@@ -25,16 +25,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
 type t = {
+  id : int;
   name : string;
   enabled : bool;
   available : bool;
 }
 
-let mk_some name enabled =
-  { name; enabled; available = true; }
+let mk_some id name enabled =
+  { id; name; enabled; available = true; }
 
 let mk_none name =
-  { name; enabled = false; available = false; }
+  { id = 0; name; enabled = false; available = false; }
 
 (* Access function *)
 let find_all () =
@@ -43,12 +44,13 @@ let find_all () =
     | exception End_of_file -> acc
     | s ->
       begin match Util.split ~seps:[' '; '\t'] s with
-        | [sub_name; _; _; enabled;] ->
-          aux ch (mk_some sub_name (enabled = "1") :: acc)
+        | [sub_name; id; _; enabled;] ->
+          aux ch (mk_some (int_of_string id) sub_name (enabled = "1") :: acc)
         | _ -> aux ch acc
       end
   in
   let ch = open_in "/proc/cgroups" in
+  ignore (input_line ch); (* first line does not have any useful info *)
   let res = aux ch [] in
   close_in ch;
   res

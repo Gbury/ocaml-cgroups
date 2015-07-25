@@ -25,6 +25,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
 type t = private {
+  id : int;
   name : string;
   enabled : bool;
   available : bool;

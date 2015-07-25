@@ -79,9 +79,62 @@ let children g =
       end else
         acc) g.path []
 
+let rec follow c = function
+  | [] -> Some c
+  | child :: r ->
+    begin match List.filter (fun s -> s.name = child) (children c) with
+      | [ c' ] -> follow c' r
+      | _ -> None
+    end
+
+let find_aux sub path =
+  match find_all [sub] with
+  | [h] -> follow (root h) (Util.split ~seps:['/'] path)
+  | _ -> None
+
+let find s =
+  match Util.split ~seps:[':'] s with
+  | [ sub; path ] -> find_aux (CGSubsystem.find sub) path
+  | _ -> None
+
 (* Modifying hierarchies *)
 let mk_sub parent name perm =
   let path = Filename.concat parent.path name in
   Unix.mkdir path perm;
   mk_cgroup name path parent.hierarchy
+
+
+(* Cgroups and processes *)
+let processes g =
+  let rec aux ch acc = match input_line ch with
+    | exception End_of_file -> close_in ch; acc
+    | s -> aux ch (int_of_string s :: acc)
+  in
+  aux (open_in (Filename.concat g.path "tasks")) []
+
+let add_process g pid =
+  let ch = open_out (Filename.concat g.path "tasks") in
+  output_string ch (string_of_int pid);
+  close_out ch
+
+let process_info pid =
+  let rec aux ch acc =
+    match input_line ch with
+    | exception End_of_file -> close_in ch; acc
+    | s ->
+      begin match Util.split ~seps:[':'] s with
+        | [id; _; path] -> aux ch ((int_of_string id, path) :: acc)
+        | _ -> aux ch acc
+      end
+  in
+  let l = aux (open_in (Format.asprintf "/proc/%d/cgroup" pid)) [] in
+  let subs = CGSubsystem.find_all () in
+  List.fold_left (fun acc (id, path) ->
+      match List.find (fun s -> s.CGSubsystem.id = id) subs with
+      | exception Not_found -> acc
+      | sub ->
+        begin match find_aux sub path with
+          | Some g -> g :: acc | None -> acc
+        end
+    ) [] l
 
