@@ -98,7 +98,7 @@ prevent users from creating new cgroups, editing limits, or movind tasks to cgro
 ### Using libcg
 
 The `libcg` (or `libcgroup`) package provides some tools to manipulate cgroups a bit more easily.
-In order to create the cgroups used in the example above, you may do:
+In order to create the memory cgroups used in the example above, you may do:
 
 ```
 cgcreate -a user:group -t user:group -g memory:foobar
@@ -108,7 +108,7 @@ cgcreate -a user:group -t user:group -g memory:foobar
 
 Or alternatively, you can do it by hand, though it requires a bit more work. First you have
 to identify the mountpoint of the hierarchy associated to the memory controller. You
-can do it by looking at mount points (i.e `mount` or `cat /proc/mount`), and look for a line
+can do it by looking at mount points (i.e `mount` or `cat /proc/mounts`), and look for a line
 like :
 
 ```
@@ -122,3 +122,8 @@ mkdir /sys/fs/cgroup/memory/foobar
 chown -R user:group /sys/fs/cgroup/memory/foobar
 ```
 
+## Other ressources
+
+You can also take a lookt at the following link for some interesting
+explanation about cgroups:
+https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt
