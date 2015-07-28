@@ -54,6 +54,9 @@ val find : string -> cgroup option
 (** Takes a string with the format ["subsystem:path/to/cgroup"] and try and
     return the corresponding cgroup. *)
 
+val find_exn : string -> cgroup
+(** Same as [find] but raises an exception if no matching cgroup is found. *)
+
 val find_all : CGSubsystem.t list -> t list
 (** Given a list of subsystems, returns the list of hierarchies that have
     at least one of the subsystems attached. Information on the returned

@@ -97,6 +97,11 @@ let find s =
   | [ sub; path ] -> find_aux (CGSubsystem.find sub) path
   | _ -> None
 
+let find_exn s =
+  match find s with
+  | Some c -> c
+  | None -> raise (Invalid_argument "find_exn")
+
 (* Modifying hierarchies *)
 let mk_sub parent name perm =
   let path = Filename.concat parent.path name in
