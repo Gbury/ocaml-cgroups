@@ -24,19 +24,29 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-(** Module aliases *)
+let t = CGSubsystem.find "cpu"
 
-(** {2 Main definitions} *)
+type stat = {
+  nr_periods : int;
+  nr_throttled : int;
+  throttled_time : int;
+}
 
-module Main = CGSubsystem
+let stat_of_string s =
+  match Util.Get.(list ~sep:'\n' (pair ~sep:' ' string int)) s with
+  | ["nr_periods", nr_periods;
+     "nr_throttled", nr_throttled;
+     "throttled_time", throttled_time] ->
+    { nr_periods; nr_throttled; throttled_time; }
+  | _ -> raise (Invalid_argument "stat_of_string")
 
-module Param = CGParameters
+let cfs_quota_us = CGParameters.mk_set t "cfs_quota_us" Util.Get.int Util.Set.int
+let cfs_period_us = CGParameters.mk_set t "cfs_period_us" Util.Get.int Util.Set.int
 
-(** {2 Known subsystems} *)
+let stat = CGParameters.mk_get t "stat" stat_of_string
 
-module Blkio = CGBlkio
-module Cpu = CGCpu
-module Cpuset = CGCpuset
-module Cpuacct = CGCpuacct
-module Memory = CGMemory
+let shares = CGParameters.mk_set t "share" (Util.Get.int ~min:2) (Util.Set.int ~min:2)
+
+let rt_period_us = CGParameters.mk_set t "rt_period_us" Util.Get.int Util.Set.int
+let rt_runtime_us = CGParameters.mk_set t "rt_runtime_us" Util.Get.int Util.Set.int
 

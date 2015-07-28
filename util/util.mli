@@ -25,6 +25,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
 val split : seps:(char list) -> string -> string list
-
 val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
+
+module type S = sig
+  type 'a t
+
+  val bool : bool t
+  val string : string t
+  val int : ?min:int -> ?max:int -> int t
+
+  val device : (int * int) t
+  val range : int list t
+
+  val list : sep:char -> 'a t -> 'a list t
+  val pair : sep:char -> 'a t -> 'b t -> ('a * 'b) t
+  val triple : sep:char -> 'a t -> 'b t -> 'c t -> ('a * 'b * 'c) t
+
+end
+
+module Get : S with type 'a t = string -> 'a
+module Set : S with type 'a t = 'a -> string
 

@@ -38,15 +38,13 @@ let stat_of_string s =
     { user = int_of_string u; system = int_of_string s}
   | _ -> assert false
 
-let int_list_of_string s = List.map int_of_string (Util.split ~seps:[' '] s)
-
 (* Parameters *)
 
 let t = CGSubsystem.find "cpuacct"
 
 let stat = A.mk_get t "stat" stat_of_string
 
-let usage = A.mk_reset t "usage" int_of_string "0"
+let usage = A.mk_reset t "usage" Util.Get.int "0"
 
-let usage_percpu = A.mk_get t "usage_percpu" int_list_of_string
+let usage_percpu = A.mk_get t "usage_percpu" Util.Get.(list ~sep:' ' int)
 

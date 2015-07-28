@@ -24,19 +24,15 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-(** Module aliases *)
+val t : CGSubsystem.t
 
-(** {2 Main definitions} *)
+type stat = { nr_periods : int; nr_throttled : int; throttled_time : int; }
 
-module Main = CGSubsystem
+val cfs_quota_us : (int, [ `Get | `Set ]) CGParameters.t
+val cfs_period_us : (int, [ `Get | `Set ]) CGParameters.t
 
-module Param = CGParameters
+val stat : (stat, [ `Get ]) CGParameters.t
+val shares : (int, [ `Get | `Set ]) CGParameters.t
 
-(** {2 Known subsystems} *)
-
-module Blkio = CGBlkio
-module Cpu = CGCpu
-module Cpuset = CGCpuset
-module Cpuacct = CGCpuacct
-module Memory = CGMemory
-
+val rt_period_us : (int, [ `Get | `Set ]) CGParameters.t
+val rt_runtime_us : (int, [ `Get | `Set ]) CGParameters.t

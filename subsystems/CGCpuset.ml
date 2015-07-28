@@ -24,19 +24,26 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-(** Module aliases *)
+let t = CGSubsystem.find "cpuset"
 
-(** {2 Main definitions} *)
+let cpus = CGParameters.mk_set t "cpus" Util.Get.range Util.Set.range
+let mems = CGParameters.mk_set t "mems" Util.Get.range Util.Set.range
 
-module Main = CGSubsystem
+let memory_migrate = CGParameters.mk_set t "memory_migrate" Util.Get.bool Util.Set.bool
 
-module Param = CGParameters
+let cpu_exclusive = CGParameters.mk_set t "cpu_exclusive" Util.Get.bool Util.Set.bool
+let mem_exclusive = CGParameters.mk_set t "memory_exclusive" Util.Get.bool Util.Set.bool
 
-(** {2 Known subsystems} *)
+let mem_hardwall = CGParameters.mk_set t "mem_hardwall" Util.Get.bool Util.Set.bool
 
-module Blkio = CGBlkio
-module Cpu = CGCpu
-module Cpuset = CGCpuset
-module Cpuacct = CGCpuacct
-module Memory = CGMemory
+let memory_pressure = CGParameters.mk_get t "memory_pressure" Util.Get.int
+
+let memory_pressure_enabled = CGParameters.mk_set t "memory_pressure_enabled" Util.Get.bool Util.Set.bool
+
+let memory_spread_page = CGParameters.mk_set t "memory_spread_page" Util.Get.bool Util.Set.bool
+let memory_spread_slab = CGParameters.mk_set t "memory_spread_slab" Util.Get.bool Util.Set.bool
+
+let sched_load_balance = CGParameters.mk_set t "sched_load_balance" Util.Get.bool Util.Set.bool
+
+let sched_relax_domain_level = CGParameters.mk_set t "sched_relax_domain_level" Util.Get.int Util.Set.int
 

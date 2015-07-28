@@ -7,4 +7,9 @@ Hierarchy
 # Subsystems
 CGSubsystem
 CGParameters
+
+CGBlkio
+CGCpu
+CGCpuset
 CGCpuacct
+CGMemory

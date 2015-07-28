@@ -24,19 +24,17 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-(** Module aliases *)
+val t : CGSubsystem.t
 
-(** {2 Main definitions} *)
-
-module Main = CGSubsystem
-
-module Param = CGParameters
-
-(** {2 Known subsystems} *)
-
-module Blkio = CGBlkio
-module Cpu = CGCpu
-module Cpuset = CGCpuset
-module Cpuacct = CGCpuacct
-module Memory = CGMemory
-
+val cpus : (int list, [ `Get | `Set ]) CGParameters.t
+val mems : (int list, [ `Get | `Set ]) CGParameters.t
+val memory_migrate : (bool, [ `Get | `Set ]) CGParameters.t
+val cpu_exclusive : (bool, [ `Get | `Set ]) CGParameters.t
+val mem_exclusive : (bool, [ `Get | `Set ]) CGParameters.t
+val mem_hardwall : (bool, [ `Get | `Set ]) CGParameters.t
+val memory_pressure : (int, [ `Get ]) CGParameters.t
+val memory_pressure_enabled : (bool, [ `Get | `Set ]) CGParameters.t
+val memory_spread_page : (bool, [ `Get | `Set ]) CGParameters.t
+val memory_spread_slab : (bool, [ `Get | `Set ]) CGParameters.t
+val sched_load_balance : (bool, [ `Get | `Set ]) CGParameters.t
+val sched_relax_domain_level : (int, [ `Get | `Set ]) CGParameters.t
