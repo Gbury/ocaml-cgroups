@@ -1,0 +1,8 @@
+name="cgroups"
+version="dev"
+description="Cgroups is an interface tfor control groups"
+requires="unix"
+archive(byte) = "cgroups.cma"
+archive(byte, plugin) = "cgroups.cma"
+archive(native) = "cgroups.cmxa"
+archive(native, plugin) = "cgroups.cmxs"
