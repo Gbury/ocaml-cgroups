@@ -26,7 +26,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** Defines the parameters of subsystems *)
 
-(** {2 Parameter type} *)
+(** {2 Types and exceptions} *)
 
 type ('ty, 'attr) t
 (** The type of parameters for subsystems. The ['ty] argument represents
@@ -34,9 +34,37 @@ type ('ty, 'attr) t
     type parameter represents the level of access of the parameter, i.e
     should it be a read-only parameter, can it be set to a specific value ? *)
 
-(** {2 Creating parameters} *)
+exception Expected_root of string * Hierarchy.cgroup
+(** Raised by parametersthat are only settable for thr rootcgroupof a hierarchy,
+    such as release_agent. *)
 
-(** As parameters are stored in system files, they are stored as strings.
+exception Subsystem_not_available of CGSubsystem.t
+(** Raised when trying to get/set/reset a parameter of a subsystem that is not
+    available on the machine. *)
+
+exception Subsystem_not_attached of CGSubsystem.t * Hierarchy.cgroup
+(** Raised when trying to get/set/reset a parameter of a subsystem that is not
+    mounted on the hierarchyof the selected cgroup. *)
+
+(** {2 Using parameters} *)
+
+val get : ('a, [> `Get ]) t -> Hierarchy.cgroup -> 'a
+(** Returns the value of the parameter for the given cgroup. *)
+
+val set : ('a, [> `Set ]) t -> Hierarchy.cgroup -> 'a -> unit
+(** Sets the parameter to the given value for the cgroup. *)
+
+val reset : ('a, [> `Reset ]) t -> Hierarchy.cgroup -> unit
+(** Reset the parameter for the given cgroup *)
+
+(** {2 Standard cgroup parameters} *)
+
+val release_agent : (string, [ `Get | `Set ]) t
+val notify_on_release : (bool, [ `Get | `Set ]) t
+(** These parameters do not belong to any subsystem but are present in every cgroup. *)
+
+(** {2 Creating parameters}
+    As parameters are stored in system files, they are stored as strings.
     Thus conversion functions are used to translate the strings to appropriate
     representations of the values actually stored. *)
 
@@ -50,15 +78,4 @@ val mk_set : CGSubsystem.t -> string -> (string -> 'a) -> ('a -> string) -> ('a,
 val mk_reset : CGSubsystem.t -> string -> (string -> 'a) -> string -> ('a, [ `Get | `Reset ]) t
 (** [mk_reset subsystem name from_string reset_value] returns a gettable parameter
     whose value can be reset by writing [reset_value] in the corresponding file. *)
-
-(** {2 Using parameters} *)
-
-val get : ('a, [> `Get ]) t -> Hierarchy.cgroup -> 'a
-(** Returns the value of the parameter for the given cgroup. *)
-
-val set : ('a, [> `Set ]) t -> Hierarchy.cgroup -> 'a -> unit
-(** Sets the parameter to the given value for the cgroup. *)
-
-val reset : ('a, [> `Reset ]) t -> Hierarchy.cgroup -> unit
-(** Reset the parameter for the given cgroup *)
 

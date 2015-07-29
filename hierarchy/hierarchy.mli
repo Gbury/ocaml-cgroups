@@ -36,8 +36,14 @@ type cgroup
 (** The type of cgroups. Each hierarchy is composed of a tree where the nodes
     and leaves are cgroups. *)
 
+val equal : t -> t -> bool
+val cgroup_equal : cgroup -> cgroup -> bool
+(** Equality functions for hierarchies and cgroups *)
 
 (** {2 Hierarchy Access} *)
+
+val is_root : cgroup -> bool
+(** Is the cgroup at the root of its hierarchy ? *)
 
 val root : t -> cgroup
 (** Returns the cgroup at the root of a given hierarchy *)

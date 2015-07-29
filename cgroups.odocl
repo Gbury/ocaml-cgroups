@@ -4,5 +4,12 @@ subsystems/Subsystem
 hierarchy/Hierarchy
 
 # Modules
+subsystems/CGSubsystem
 subsystems/CGParameters
+
+# Controllers
+subsystems/CGBlkio
+subsystems/CGCpu
+subsystems/CGCpuset
 subsystems/CGCpuacct
+subsystems/CGMemory

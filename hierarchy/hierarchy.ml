@@ -29,11 +29,15 @@ type t = {
   subsystems : CGSubsystem.t list;
 }
 
-and cgroup = {
+let equal t t' = t.mount = t'.mount
+
+type cgroup = {
   name : string;
   path : string;
   hierarchy : t;
 }
+
+let cgroup_equal g g' = g.path = g'.path
 
 let mk_t mount subsystems =
   assert (List.for_all (fun s -> s.CGSubsystem.enabled) subsystems);
@@ -41,6 +45,9 @@ let mk_t mount subsystems =
 
 let mk_cgroup name path hierarchy =
   { name; path; hierarchy; }
+
+(* Test *)
+let is_root g = g.name = ""
 
 (* Access function *)
 let root h = mk_cgroup "" h.mount h
@@ -94,6 +101,7 @@ let find_aux sub path =
 
 let find s =
   match Util.split ~seps:[':'] s with
+  | [ sub ] -> find_aux (CGSubsystem.find sub) ""
   | [ sub; path ] -> find_aux (CGSubsystem.find sub) path
   | _ -> None
 

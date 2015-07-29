@@ -28,8 +28,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 (** {2 Main definitions} *)
 
+(** Main module. Contains the definition of a subsystem, and some functions
+    to get installed subsystems *)
 module Main = CGSubsystem
 
+(** Subsystems parameters. This defines the type of tunable parameters
+    for controllers and provides accesors to those parameters. *)
 module Param = CGParameters
 
 (** {2 Known subsystems} *)
