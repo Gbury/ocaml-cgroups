@@ -8,7 +8,7 @@ compute and/or restrict the behavior of said groups of processes.
 As such, cgroups allow to keep track of processes memory allocation,
 cpu time, input/output, etc ...
 
-For further documentation, a good ressource is:
+For further documentation, a good resource is:
 https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html
 
 Since cgroups interaction is done via the filesystem, some permissions
@@ -28,16 +28,16 @@ nothing prevents to move them to other cgroups afterward.
 
 Standard subsystems include:
 
-- memory: a subsystem to gather information about memory ressources used by a program;
+- memory: a subsystem to gather information about memory resources used by a program;
   can also set soft and hard limits to the memory consumption of programs
 - cpu: a subsystem to control scheduling of cpus among cgroups
-- cpuacct: a subsystem that gathers information about cpu ressources used by processes
+- cpuacct: a subsystem that gathers information about cpu resources used by processes
 - cpuset: a subsystem to assign individual cpus and memory nodes to process in cgroups
 
 ## Examples
 
-Let's say you want to limit the ressources used by a program `P` and its children.
-You may want to prevent the memory used, as well as keep track of the cpu ressources
+Let's say you want to limit the resources used by a program `P` and its children.
+You may want to limit the memory used, as well as keep track of the cpu resources
 used, so that you may send a signal to the process if it exceeds a certain amount.
 
 For that, we need to use two subsystems which are the 'memory' and 'cpuacct' subsystems.
@@ -47,7 +47,7 @@ to observe. For this example, we will suppose such a group already exists, and i
 foobar (see following section on the creation of cgroups).
 
 Now that we have our cgroups, we will need to attach `P` to them, this is done
-wia tha `Hierarchy.add_process` function. Please note that it is only `P` that we
+via the `Hierarchy.add_process` function. Please note that it is only `P` that we
 add to the cgroup, so if at that moment, `P` has already spawned children, they
 will NOT be added to the cgroup; however, once `P` is in the cgroup, the children
 it spawns will automatically belongs to the same cgroup as `P`.
@@ -60,7 +60,7 @@ using the predefined subsystem parameters in the `Subsystem.Memory` and
 ```ocaml
 open Cgroups
 
-(* This call tries and find the hierachy attached to a subsystem, and then
+(* This call tries and find the hieracrhy attached to a subsystem, and then
    go down the hierarchy to find the specified cgroup. Is the specified
    cgroup does not exists, it will raises Invalid_argument *)
 let memory_cgroup = Hierarchy.find_exn "memory:/foobar" in
@@ -90,10 +90,10 @@ Subsystem.Parameters.set Subsystem.Memory.memsw_limit_in_bytes memory_cgroup 2_0
 
 ## Creation of cgroups
 
-As mentionned previously, all interactions with cgroups is done via the filesystem,
+As mentioned previously, all interactions with cgroups is done via the filesystem,
 which may bring some annoying problems about permission sometimes. For instance,
 most hierarchies and groups are only writable by `root` by default, which
-prevent users from creating new cgroups, editing limits, or movind tasks to cgroups.
+prevent users from creating new cgroups, editing limits, or moving tasks to cgroups.
 
 ### Using libcg
 
@@ -115,15 +115,18 @@ like :
 cgroup on /sys/fs/cgroup/memory type cgroup (rw,nosuid,nodev,noexec,relatime,memory)
 ```
 
-You can then create the appropriate directory and set the owner and permissions as desired:
+You can then create the appropriate directory and set the owner and permissions as desired,
+using the following commands (you may need root permission to do this).
 
 ```
 mkdir /sys/fs/cgroup/memory/foobar
 chown -R user:group /sys/fs/cgroup/memory/foobar
 ```
 
-## Other ressources
+## Other resources
 
-You can also take a lookt at the following link for some interesting
+You can also take a look at the following link for some interesting
 explanation about cgroups:
 https://www.kernel.org/doc/Documentation/cgroups/cgroups.txt
+
+
