@@ -20,7 +20,7 @@ depends: [
 available: [
   ocaml-version >= "4.02.1"
   ]
-tags: [ "cgroup" "controller" ]
+tags: [ "cgroup" ]
 homepage: "https://github.com/Gbury/ocaml-cgroups"
 dev-repo: "https://github.com/Gbury/ocaml-cgroups.git"
 bug-reports: "https://github.com/Gbury/ocaml-cgroups/issues/"

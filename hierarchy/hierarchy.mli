@@ -48,6 +48,9 @@ val is_root : cgroup -> bool
 val root : t -> cgroup
 (** Returns the cgroup at the root of a given hierarchy *)
 
+val name : cgroup -> string
+(** Return the name of the cgroup *)
+
 val path : cgroup -> string
 (** Returns the filesystem path of a cgroup. *)
 

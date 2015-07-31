@@ -52,6 +52,7 @@ let is_root g = g.name = ""
 (* Access function *)
 let root h = mk_cgroup "" h.mount h
 
+let name g = g.name
 let path g = g.path
 let subsys g = g.hierarchy.subsystems
 
