@@ -61,7 +61,7 @@ val memsw_usage_in_bytes : (int, [ `Get ]) CGParameters.t
 val max_usage_in_bytes : (int, [ `Get ]) CGParameters.t
 val memsw_max_usage_in_bytes : (int, [ `Get ]) CGParameters.t
 val limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t
-val memsw_ : 'a -> (int, [ `Get | `Set ]) CGParameters.t
+val memsw_limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t
 val failcnt : (int, [ `Get ]) CGParameters.t
 val memsw_failcnt : (int, [ `Get ]) CGParameters.t
 val soft_limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t

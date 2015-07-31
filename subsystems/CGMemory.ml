@@ -110,7 +110,7 @@ let max_usage_in_bytes = CGParameters.mk_get t "max_usage_in_bytes" Util.Get.int
 let memsw_max_usage_in_bytes = CGParameters.mk_get t "memsw.usage_in_bytes" Util.Get.int
 
 let limit_in_bytes = CGParameters.mk_set t "limit_in_bytes" Util.Get.int Util.Set.int
-let memsw_ limit_in_bytes = CGParameters.mk_set t "memsw.limit_in_bytes" Util.Get.int Util.Set.int
+let memsw_limit_in_bytes = CGParameters.mk_set t "memsw.limit_in_bytes" Util.Get.int Util.Set.int
 
 let failcnt = CGParameters.mk_get t "failcnt" Util.Get.int
 let memsw_failcnt = CGParameters.mk_get t "memsw.fail_cnt" Util.Get.int
