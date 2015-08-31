@@ -66,6 +66,10 @@ val find : string -> cgroup option
 val find_exn : string -> cgroup
 (** Same as [find] but raises an exception if no matching cgroup is found. *)
 
+val find_or_create : perm:Unix.file_perm -> string -> cgroup
+(** Same as find, but creates the cgroup at the end of the path (and all necessary
+    cgroups in between) and if the specified path does not yet exists. *)
+
 val find_all : CGSubsystem.t list -> t list
 (** Given a list of subsystems, returns the list of hierarchies that have
     at least one of the subsystems attached. Information on the returned
@@ -78,12 +82,15 @@ val children : cgroup -> cgroup list
 (** Returns the list of children of a cgroup. *)
 
 val mk_sub : cgroup -> string -> Unix.file_perm -> cgroup
-(** Create a new childrenfor a cgroup. Since interaction with cgroups is
+(** Create a new children for a cgroup. Since interaction with cgroups is
     done via the filesystem, this means creating a directory at the
     appropriate place in the filesystem, hence the permission argument.
-    Note that this function may currently very well raise erros from the
+    Note that this function may currently very well raise errors from the
     Unix module if, for instance, the user does not have permission
     to create directories in the cgroup. *)
+
+val make : cgroup -> string -> Unix.file_perm -> cgroup
+(** Same as [mk_sub] but accepts a path instead of a single groupe name. *)
 
 (** {2 Processes in cgroups} *)
 

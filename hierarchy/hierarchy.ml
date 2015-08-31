@@ -88,22 +88,54 @@ let children g =
         acc) g.path []
 
 let rec follow c = function
-  | [] -> Some c
-  | child :: r ->
+  | [] -> c, []
+  | (child :: r) as l ->
     begin match List.filter (fun s -> s.name = child) (children c) with
       | [ c' ] -> follow c' r
-      | _ -> None
+      | [] -> c, l
+      | _ -> assert false
     end
 
-let find_aux sub path =
+(* Modifying hierarchies *)
+let mk_sub parent name perm =
+  let path = Filename.concat parent.path name in
+  if Sys.file_exists path then
+    raise (Invalid_argument "Hierachy.mk_sub")
+  else begin
+    Unix.mkdir path perm;
+    mk_cgroup name path parent.hierarchy
+  end
+
+let rec make_aux perm curr = function
+  | child :: r -> make_aux perm (mk_sub curr child perm) r
+  | [] -> curr
+
+let make parent path perm =
+  match Util.split ~seps:['/'] path with
+  | [] -> parent
+  | (first :: _) as l ->
+    if List.exists (fun s -> s.name = first) (children parent) then
+      raise (Invalid_argument "Hierarchy.make")
+    else
+      make_aux perm parent l
+
+(* Easy access *)
+let get (sub, path) =
   match find_all [sub] with
-  | [h] -> follow (root h) (Util.split ~seps:['/'] path)
+  | [h] -> Some (follow (root h) (Util.split ~seps:['/'] path))
   | _ -> None
 
+let find_aux s =
+  let args = match Util.split ~seps:[':'] s with
+    | [ sub ] -> Some (CGSubsystem.find sub, "")
+    | [ sub; path ] -> Some (CGSubsystem.find sub, path)
+    | _ -> None
+  in
+  Util.Opt.bind get args
+
 let find s =
-  match Util.split ~seps:[':'] s with
-  | [ sub ] -> find_aux (CGSubsystem.find sub) ""
-  | [ sub; path ] -> find_aux (CGSubsystem.find sub) path
+  match find_aux s with
+  | Some (res, []) -> Some res
   | _ -> None
 
 let find_exn s =
@@ -111,12 +143,10 @@ let find_exn s =
   | Some c -> c
   | None -> raise (Invalid_argument "find_exn")
 
-(* Modifying hierarchies *)
-let mk_sub parent name perm =
-  let path = Filename.concat parent.path name in
-  Unix.mkdir path perm;
-  mk_cgroup name path parent.hierarchy
-
+let find_or_create ~perm s =
+  match find_aux s with
+  | Some (c, l) -> make_aux perm c l
+  | None -> raise (Invalid_argument "find_and_create")
 
 (* Cgroups and processes *)
 let processes g =
@@ -147,8 +177,8 @@ let process_info pid =
       match List.find (fun s -> s.CGSubsystem.id = id) subs with
       | exception Not_found -> acc
       | sub ->
-        begin match find_aux sub path with
-          | Some g -> g :: acc | None -> acc
+        begin match get (sub, path) with
+          | Some (g, []) -> g :: acc | _ -> acc
         end
     ) [] l
 

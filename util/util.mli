@@ -27,6 +27,12 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 val split : seps:(char list) -> string -> string list
 val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
 
+module Opt : sig
+  val map : ('a -> 'b) -> 'a option -> 'b option
+  val iter : ('a -> unit) -> 'a option -> unit
+  val bind : ('a -> 'b option) -> 'a option -> 'b option
+end
+
 module type S = sig
   type 'a t
 

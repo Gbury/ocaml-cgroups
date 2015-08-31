@@ -54,6 +54,17 @@ let split ~seps s =
   in
   List.rev (aux seps s [] 0)
 
+(* Option operations *)
+module Opt = struct
+
+  let iter f = function None -> () | Some a -> f a
+
+  let map f = function None -> None | Some a -> Some (f a)
+
+  let bind f = function None -> None | Some a -> f a
+
+end
+
 (* Conversion to/from strings *)
 module type S = sig
   type 'a t
