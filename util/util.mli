@@ -33,6 +33,7 @@ val compactify : int list -> (int * int) list
 module Opt : sig
   val map : ('a -> 'b) -> 'a option -> 'b option
   val iter : ('a -> unit) -> 'a option -> unit
+  val iter2 : ('a -> 'b -> unit) -> ('a * 'b) option -> unit
   val bind : ('a -> 'b option) -> 'a option -> 'b option
 end
 

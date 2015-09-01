@@ -66,11 +66,28 @@ val find : string -> cgroup option
 val find_exn : string -> cgroup
 (** Same as [find] but raises an exception if no matching cgroup is found. *)
 
-val find_or_create : perm:Unix.file_perm -> string -> cgroup
+val make_sub : ?id: int * int -> ?a: Unix.file_perm -> ?t: Unix.file_perm ->
+  perm:Unix.file_perm -> cgroup -> string -> cgroup
+(** Create a new children for a cgroup. Since interaction with cgroups is
+    done via the filesystem, this means creating a directory at the
+    appropriate place in the filesystem. The [~perm] argument is used for the directory
+    permissions, the [?t] for the tasks file and [?a] for other subsystem files.
+    If provided, the directory as well as files will be chowned to the uid and gid provided
+    by [?id].
+    Note that this function may currently very well raise errors from the
+    Unix module if, for instance, the user does not have permission
+    to create directories in the cgroup. *)
+
+val make : ?id: int * int -> ?a: Unix.file_perm -> ?t: Unix.file_perm ->
+  perm:Unix.file_perm -> cgroup -> string -> cgroup
+(** Same as [mk_sub] but accepts a path instead of a single groupe name. *)
+
+val find_or_create : ?id: int * int -> ?a: Unix.file_perm -> ?t: Unix.file_perm ->
+  perm:Unix.file_perm -> string -> cgroup
 (** Same as find, but creates the cgroup at the end of the path (and all necessary
     cgroups in between) and if the specified path does not yet exists. *)
 
-val find_all : CGSubsystem.t list -> t list
+val scan : CGSubsystem.t list -> t list
 (** Given a list of subsystems, returns the list of hierarchies that have
     at least one of the subsystems attached. Information on the returned
     hierarchies may be incomplete, i.e if a hierarchy [h] has subsystems ["A"]
@@ -80,17 +97,6 @@ val find_all : CGSubsystem.t list -> t list
 
 val children : cgroup -> cgroup list
 (** Returns the list of children of a cgroup. *)
-
-val mk_sub : cgroup -> string -> Unix.file_perm -> cgroup
-(** Create a new children for a cgroup. Since interaction with cgroups is
-    done via the filesystem, this means creating a directory at the
-    appropriate place in the filesystem, hence the permission argument.
-    Note that this function may currently very well raise errors from the
-    Unix module if, for instance, the user does not have permission
-    to create directories in the cgroup. *)
-
-val make : cgroup -> string -> Unix.file_perm -> cgroup
-(** Same as [mk_sub] but accepts a path instead of a single groupe name. *)
 
 (** {2 Processes in cgroups} *)
 

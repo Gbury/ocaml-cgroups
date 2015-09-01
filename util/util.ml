@@ -76,9 +76,11 @@ let compactify l =
 (* Option operations *)
 module Opt = struct
 
+  let map f = function None -> None | Some a -> Some (f a)
+
   let iter f = function None -> () | Some a -> f a
 
-  let map f = function None -> None | Some a -> Some (f a)
+  let iter2 f = function None -> () | Some (a, b) -> f a b
 
   let bind f = function None -> None | Some a -> f a
 

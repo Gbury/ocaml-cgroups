@@ -57,7 +57,7 @@ let path g = g.path
 let subsys g = g.hierarchy.subsystems
 
 (* Generating hierarchies *)
-let find_all subsys =
+let scan subsys =
   let rec aux ch acc =
     match input_line ch with
     | exception End_of_file -> acc
@@ -97,31 +97,41 @@ let rec follow c = function
     end
 
 (* Modifying hierarchies *)
-let mk_sub parent name perm =
+let make_sub ?id ?a ?t ~perm parent name =
   let path = Filename.concat parent.path name in
   if Sys.file_exists path then
     raise (Invalid_argument "Hierachy.mk_sub")
   else begin
     Unix.mkdir path perm;
+    Util.Opt.iter2 (Unix.chown path) id;
+    Util.fold_dir (fun s () ->
+        let full_path = Filename.concat path s in
+        Util.Opt.iter2 (Unix.chown full_path) id;
+        if s = "tasks" then
+          Util.Opt.iter (Unix.chmod full_path) t
+        else
+          Util.Opt.iter (Unix.chmod full_path) a;
+      ) path ();
     mk_cgroup name path parent.hierarchy
   end
 
-let rec make_aux perm curr = function
-  | child :: r -> make_aux perm (mk_sub curr child perm) r
+let rec make_aux ?id ?a ?t ~perm curr = function
+  | child :: r -> make_aux ?id ?a ?t ~perm
+                    (make_sub ?id ?a ?t ~perm curr child) r
   | [] -> curr
 
-let make parent path perm =
+let make ?id ?a ?t ~perm parent path =
   match Util.split ~seps:['/'] path with
   | [] -> parent
   | (first :: _) as l ->
     if List.exists (fun s -> s.name = first) (children parent) then
       raise (Invalid_argument "Hierarchy.make")
     else
-      make_aux perm parent l
+      make_aux ?id ?a ?t ~perm parent l
 
 (* Easy access *)
 let get (sub, path) =
-  match find_all [sub] with
+  match scan [sub] with
   | [h] -> Some (follow (root h) (Util.split ~seps:['/'] path))
   | _ -> None
 
@@ -143,9 +153,9 @@ let find_exn s =
   | Some c -> c
   | None -> raise (Invalid_argument "find_exn")
 
-let find_or_create ~perm s =
+let find_or_create ?id ?a ?t ~perm s =
   match find_aux s with
-  | Some (c, l) -> make_aux perm c l
+  | Some (c, l) -> make_aux ?id ?a ?t ~perm c l
   | None -> raise (Invalid_argument "find_and_create")
 
 (* Cgroups and processes *)
