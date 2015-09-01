@@ -30,3 +30,9 @@ val fold_dir : (string -> 'a -> 'a) -> string -> 'a -> 'a
 val range : int * int -> int list
 val compactify : int list -> (int * int) list
 
+module Opt : sig
+  val map : ('a -> 'b) -> 'a option -> 'b option
+  val iter : ('a -> unit) -> 'a option -> unit
+  val bind : ('a -> 'b option) -> 'a option -> 'b option
+end
+

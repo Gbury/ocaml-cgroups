@@ -73,3 +73,14 @@ let compactify l =
   | [] -> []
   | x :: r -> aux [] (x,x) r
 
+(* Option operations *)
+module Opt = struct
+
+  let iter f = function None -> () | Some a -> f a
+
+  let map f = function None -> None | Some a -> Some (f a)
+
+  let bind f = function None -> None | Some a -> f a
+
+end
+
