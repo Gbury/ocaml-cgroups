@@ -28,11 +28,12 @@ val t : CGSubsystem.t
 
 type stat = { nr_periods : int; nr_throttled : int; throttled_time : int; }
 
-val cfs_quota_us : (int, [ `Get | `Set ]) CGParameters.t
-val cfs_period_us : (int, [ `Get | `Set ]) CGParameters.t
+val cfs_quota_us : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val cfs_period_us : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
 
-val stat : (stat, [ `Get ]) CGParameters.t
-val shares : (int, [ `Get | `Set ]) CGParameters.t
+val stat : (stat, [ `Read ], [ `Dummy ]) CGParameters.t
+val shares : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
 
-val rt_period_us : (int, [ `Get | `Set ]) CGParameters.t
-val rt_runtime_us : (int, [ `Get | `Set ]) CGParameters.t
+val rt_period_us : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val rt_runtime_us : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+

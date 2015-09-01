@@ -78,7 +78,7 @@ val children : cgroup -> cgroup list
 (** Returns the list of children of a cgroup. *)
 
 val mk_sub : cgroup -> string -> Unix.file_perm -> cgroup
-(** Create a new childrenfor a cgroup. Since interaction with cgroups is
+(** Create a new children for a cgroup. Since interaction with cgroups is
     done via the filesystem, this means creating a directory at the
     appropriate place in the filesystem, hence the permission argument.
     Note that this function may currently very well raise erros from the

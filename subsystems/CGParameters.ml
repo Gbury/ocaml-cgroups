@@ -28,16 +28,15 @@ exception Expected_root of string * Hierarchy.cgroup
 exception Subsystem_not_available of CGSubsystem.t
 exception Subsystem_not_attached of CGSubsystem.t * Hierarchy.cgroup
 
-type ('ty, 'attr) t = {
+type ('a, -'b, -'c) t = {
   name : string;
   subsystem : CGSubsystem.t option;
 
   reset_value : string;
-  from_string : string -> 'ty;
-  to_string : 'ty -> string;
+  converter : ('a, 'b) Converter.t;
 
   check : Hierarchy.cgroup -> unit;
-}
+} constraint 'b = [< `Read | `Write ]
 
 let check sub_opt =
   match sub_opt with
@@ -50,27 +49,26 @@ let check sub_opt =
          raise (Subsystem_not_attached (sub, g))
     )
 
-let mk subsystem name from_string
-    ?(reset_value = "") ?(to_string = (fun _ -> ""))
-    ?(check=(check subsystem)) () =
-  { name; subsystem; reset_value; from_string; to_string; check; }
+let mk subsystem name converter ?(reset_value = "") ?(check=(check subsystem)) () =
+  { name; subsystem; reset_value; converter; check; }
 
 (* Cgroup tunable parameters *)
-let notify_on_release = mk None "notify_on_release" Util.Get.bool
-    ~to_string:Util.Set.bool ~check:(fun _ -> ()) ()
+let notify_on_release = mk None "notify_on_release" Converter.bool ~check:(fun _ -> ()) ()
 
-let release_agent = mk None "release_agent" Util.Get.string
-    ~to_string:Util.Set.string ~check:(fun g ->
+let release_agent = mk None "release_agent" Converter.string
+    ~check:(fun g ->
         if not (Hierarchy.is_root g) then
           raise (Expected_root ("release_agent", g))
       ) ()
 
 (* Attribute creation *)
-let mk_get sub name from_string = mk (Some sub) name from_string ()
+let mk_get sub name converter =
+  mk (Some sub) name (converter : ('a, [> `Read]) Converter.t :> ('a, [ `Read ]) Converter.t) ()
 
-let mk_set sub name from_string to_string = mk (Some sub) name from_string ~to_string ()
+let mk_set sub name converter = mk (Some sub) name converter ()
 
-let mk_reset sub name from_string reset_value = mk (Some sub) name from_string ~reset_value ()
+let mk_reset sub name converter reset_value =
+  mk (Some sub) name (converter : ('a, [> `Read]) Converter.t :> ('a, [ `Read ]) Converter.t) ~reset_value ()
 
 (* Low-level Accessors *)
 let file t =
@@ -100,11 +98,11 @@ let raw_set attr path value =
 
 let get t g =
   t.check g;
-  t.from_string (raw_get t (Hierarchy.path g))
+  Converter.read t.converter (raw_get t (Hierarchy.path g))
 
 let set t g value =
   t.check g;
-  raw_set t (Hierarchy.path g) (t.to_string value)
+  raw_set t (Hierarchy.path g) (Converter.write t.converter value)
 
 let reset t g =
   t.check g;

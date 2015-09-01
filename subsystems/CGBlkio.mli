@@ -26,28 +26,29 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 val t : CGSubsystem.t
 
-val weight : (int, [ `Get | `Set ]) CGParameters.t
-val weight_device :(((int * int) * int) list, [ `Get | `Set ]) CGParameters.t
+val weight : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val weight_device :(((int * int) * int) list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
 
-val throttle_read_bps_device : (((int * int) * int) list, [ `Get | `Set ]) CGParameters.t
-val throttle_read_iops_device : (((int * int) * int) list, [ `Get | `Set ]) CGParameters.t
-val throttle_write_bps_device : (((int * int) * int) list, [ `Get | `Set ]) CGParameters.t
-val throttle_write_iops_device : (((int * int) * int) list, [ `Get | `Set ]) CGParameters.t
-val throttle_io_serviced : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
-val throttle_io_service_bytes : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
+val throttle_read_bps_device : (((int * int) * int) list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val throttle_read_iops_device : (((int * int) * int) list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val throttle_write_bps_device : (((int * int) * int) list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val throttle_write_iops_device : (((int * int) * int) list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val throttle_io_serviced : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val throttle_io_service_bytes : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
 
-val reset_stats : (int, [ `Get | `Reset ]) CGParameters.t
-val time : (((int * int) * int) list, [ `Get ]) CGParameters.t
-val sectors : (((int * int) * int) list, [ `Get ]) CGParameters.t
-val avg_queue_size : (int, [ `Get ]) CGParameters.t
-val group_wait_time : (int, [ `Get ]) CGParameters.t
-val empty_time : (int, [ `Get ]) CGParameters.t
-val idle_time : (int, [ `Get ]) CGParameters.t
+val reset_stats : (int, [ `Read ], [ `Reset ]) CGParameters.t
+val time : (((int * int) * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val sectors : (((int * int) * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val avg_queue_size : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val group_wait_time : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val empty_time : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val idle_time : (int, [ `Read ], [ `Dummy ]) CGParameters.t
 
-val io_serviced : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
-val io_service_bytes : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
-val io_service_time : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
+val io_serviced : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val io_service_bytes : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val io_service_time : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
 
-val wait_time : (((int * int) * string * int) list, [ `Get ]) CGParameters.t
-val io_merged : (int * string, [ `Get ]) CGParameters.t
-val io_queued : (int * string, [ `Get ]) CGParameters.t
+val wait_time : (((int * int) * string * int) list, [ `Read ], [ `Dummy ]) CGParameters.t
+val io_merged : (int * string, [ `Read ], [ `Dummy ]) CGParameters.t
+val io_queued : (int * string, [ `Read ], [ `Dummy ]) CGParameters.t
+

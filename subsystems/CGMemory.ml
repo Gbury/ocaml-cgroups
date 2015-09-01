@@ -55,8 +55,8 @@ type stat = {
   hierarchical_memsw_limit : int
 }
 
-let stat_of_string s =
-  let l = Util.Get.(list ~sep:'\n' (pair ~sep:' ' string int) s) in
+let stat_converter = Converter.ro
+  (fun s -> let l = Converter.(read (list ~sep:'\n' (pair ~sep:' ' string int))) s in
   try {
     cache         = List.assoc "cache" l;
     rss           = List.assoc "rss" l;
@@ -85,45 +85,42 @@ let stat_of_string s =
     hierarchical_memory_limit = List.assoc "hierarchical_memory_limit" l;
     hierarchical_memsw_limit = List.assoc "hierarchical_memsw_limit" l;
   }
-  with Not_found -> raise (Invalid_argument "stat_of_string")
+  with Not_found -> raise (Invalid_argument "stat_of_string"))
 
 type oom_control = {
   oom_kill_disable : bool;
   under_oom : bool;
 }
 
-let oom_of_string s =
-  let l = Util.Get.(list ~sep:'\n' (pair ~sep:' ' string bool) s) in
-  {
-    oom_kill_disable = List.assoc "oom_kill_disable" l;
-    under_oom = List.assoc "under_oom" l;
-  }
+let oom_converter = Converter.rw
+  (fun s -> let l = Converter.(read (list ~sep:'\n' (pair ~sep:' ' string bool))) s in
+  { oom_kill_disable = List.assoc "oom_kill_disable" l;
+    under_oom = List.assoc "under_oom" l; })
+  (fun o -> Converter.(write bool) o.oom_kill_disable)
 
-let string_of_oom o = Util.Set.bool o.oom_kill_disable
+let stat = CGParameters.mk_get t "stat" stat_converter
 
-let stat = CGParameters.mk_get t "stat" stat_of_string
+let usage_in_bytes = CGParameters.mk_get t "usage_in_bytes" Converter.int
+let memsw_usage_in_bytes = CGParameters.mk_get t "memsw.usage_in_bytes" Converter.int
 
-let usage_in_bytes = CGParameters.mk_get t "usage_in_bytes" Util.Get.int
-let memsw_usage_in_bytes = CGParameters.mk_get t "memsw.usage_in_bytes" Util.Get.int
+let max_usage_in_bytes = CGParameters.mk_get t "max_usage_in_bytes" Converter.int
+let memsw_max_usage_in_bytes = CGParameters.mk_get t "memsw.usage_in_bytes" Converter.int
 
-let max_usage_in_bytes = CGParameters.mk_get t "max_usage_in_bytes" Util.Get.int
-let memsw_max_usage_in_bytes = CGParameters.mk_get t "memsw.usage_in_bytes" Util.Get.int
+let limit_in_bytes = CGParameters.mk_set t "limit_in_bytes" Converter.int
+let memsw_limit_in_bytes = CGParameters.mk_set t "memsw.limit_in_bytes" Converter.int
 
-let limit_in_bytes = CGParameters.mk_set t "limit_in_bytes" Util.Get.int Util.Set.int
-let memsw_limit_in_bytes = CGParameters.mk_set t "memsw.limit_in_bytes" Util.Get.int Util.Set.int
+let failcnt = CGParameters.mk_get t "failcnt" Converter.int
+let memsw_failcnt = CGParameters.mk_get t "memsw.fail_cnt" Converter.int
 
-let failcnt = CGParameters.mk_get t "failcnt" Util.Get.int
-let memsw_failcnt = CGParameters.mk_get t "memsw.fail_cnt" Util.Get.int
+let soft_limit_in_bytes = CGParameters.mk_set t "soft_limit_in_bytes" Converter.int
 
-let soft_limit_in_bytes = CGParameters.mk_set t "soft_limit_in_bytes" Util.Get.int Util.Set.int
+let force_empty = CGParameters.mk_reset t "force_empty" Converter.int "0"
 
-let force_empty = CGParameters.mk_reset t "force_empty" Util.Get.int "0"
+let swappiness = CGParameters.mk_set t "swappiness" Converter.int
 
-let swappiness = CGParameters.mk_set t "swappiness" Util.Get.int Util.Set.int
+let move_charge_at_immigrate = CGParameters.mk_set t "move_charge_at_immigrate" Converter.bool
 
-let move_charge_at_immigrate = CGParameters.mk_set t "move_charge_at_immigrate" Util.Get.bool Util.Set.bool
+let use_hierarchy = CGParameters.mk_set t "use_hierarchy" Converter.bool
 
-let use_hierarchy = CGParameters.mk_set t "use_hierarchy" Util.Get.bool Util.Set.bool
-
-let oom_control = CGParameters.mk_set t "oom_control" oom_of_string string_of_oom
+let oom_control = CGParameters.mk_set t "oom_control" oom_converter
 

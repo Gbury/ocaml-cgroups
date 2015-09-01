@@ -39,14 +39,14 @@ type stat = {
 val t : CGSubsystem.t
 (** The name of the subsystem *)
 
-val stat : (stat, [ `Get ]) CGParameters.t
+val stat : (stat, [ `Read ], [ `Dummy ]) CGParameters.t
 (** Parameter: returns the user & system time (in nanoseconds) used by
     all tasks in a cgroup and its children (recursively). *)
 
-val usage : (int, [ `Get | `Reset ]) CGParameters.t
+val usage : (int, [ `Read ], [ `Reset ]) CGParameters.t
 (** Parameter: returns the cpu time (in nanoseconds) used by
     all tasks in a cgroup and its children (recusively). *)
 
-val usage_percpu : (int list, [ `Get ]) CGParameters.t
+val usage_percpu : (int list, [ `Read ], [ `Dummy ]) CGParameters.t
 (** Parameter: same as [usage] but discriminates between cpus. *)
 

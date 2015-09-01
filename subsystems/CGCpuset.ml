@@ -26,24 +26,24 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 let t = CGSubsystem.find "cpuset"
 
-let cpus = CGParameters.mk_set t "cpus" Util.Get.range Util.Set.range
-let mems = CGParameters.mk_set t "mems" Util.Get.range Util.Set.range
+let cpus = CGParameters.mk_set t "cpus" Converter.range
+let mems = CGParameters.mk_set t "mems" Converter.range
 
-let memory_migrate = CGParameters.mk_set t "memory_migrate" Util.Get.bool Util.Set.bool
+let memory_migrate = CGParameters.mk_set t "memory_migrate" Converter.bool
 
-let cpu_exclusive = CGParameters.mk_set t "cpu_exclusive" Util.Get.bool Util.Set.bool
-let mem_exclusive = CGParameters.mk_set t "memory_exclusive" Util.Get.bool Util.Set.bool
+let cpu_exclusive = CGParameters.mk_set t "cpu_exclusive" Converter.bool
+let mem_exclusive = CGParameters.mk_set t "memory_exclusive" Converter.bool
 
-let mem_hardwall = CGParameters.mk_set t "mem_hardwall" Util.Get.bool Util.Set.bool
+let mem_hardwall = CGParameters.mk_set t "mem_hardwall" Converter.bool
 
-let memory_pressure = CGParameters.mk_get t "memory_pressure" Util.Get.int
+let memory_pressure = CGParameters.mk_get t "memory_pressure" Converter.int
 
-let memory_pressure_enabled = CGParameters.mk_set t "memory_pressure_enabled" Util.Get.bool Util.Set.bool
+let memory_pressure_enabled = CGParameters.mk_set t "memory_pressure_enabled" Converter.bool
 
-let memory_spread_page = CGParameters.mk_set t "memory_spread_page" Util.Get.bool Util.Set.bool
-let memory_spread_slab = CGParameters.mk_set t "memory_spread_slab" Util.Get.bool Util.Set.bool
+let memory_spread_page = CGParameters.mk_set t "memory_spread_page" Converter.bool
+let memory_spread_slab = CGParameters.mk_set t "memory_spread_slab" Converter.bool
 
-let sched_load_balance = CGParameters.mk_set t "sched_load_balance" Util.Get.bool Util.Set.bool
+let sched_load_balance = CGParameters.mk_set t "sched_load_balance" Converter.bool
 
-let sched_relax_domain_level = CGParameters.mk_set t "sched_relax_domain_level" Util.Get.int Util.Set.int
+let sched_relax_domain_level = CGParameters.mk_set t "sched_relax_domain_level" Converter.int
 

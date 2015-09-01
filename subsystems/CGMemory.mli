@@ -55,18 +55,19 @@ type stat = {
 
 type oom_control = { oom_kill_disable : bool; under_oom : bool; }
 
-val stat : (stat, [ `Get ]) CGParameters.t
-val usage_in_bytes : (int, [ `Get ]) CGParameters.t
-val memsw_usage_in_bytes : (int, [ `Get ]) CGParameters.t
-val max_usage_in_bytes : (int, [ `Get ]) CGParameters.t
-val memsw_max_usage_in_bytes : (int, [ `Get ]) CGParameters.t
-val limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t
-val memsw_limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t
-val failcnt : (int, [ `Get ]) CGParameters.t
-val memsw_failcnt : (int, [ `Get ]) CGParameters.t
-val soft_limit_in_bytes : (int, [ `Get | `Set ]) CGParameters.t
-val force_empty : (int, [ `Get | `Reset ]) CGParameters.t
-val swappiness : (int, [ `Get | `Set ]) CGParameters.t
-val move_charge_at_immigrate : (bool, [ `Get | `Set ]) CGParameters.t
-val use_hierarchy : (bool, [ `Get | `Set ]) CGParameters.t
-val oom_control : (oom_control, [ `Get | `Set ]) CGParameters.t
+val stat : (stat, [ `Read ], [ `Dummy ]) CGParameters.t
+val usage_in_bytes : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val memsw_usage_in_bytes : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val max_usage_in_bytes : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val memsw_max_usage_in_bytes : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val limit_in_bytes : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val memsw_limit_in_bytes : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val failcnt : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val memsw_failcnt : (int, [ `Read ], [ `Dummy ]) CGParameters.t
+val soft_limit_in_bytes : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val force_empty : (int, [ `Read ], [ `Reset ]) CGParameters.t
+val swappiness : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val move_charge_at_immigrate : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val use_hierarchy : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val oom_control : (oom_control, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+

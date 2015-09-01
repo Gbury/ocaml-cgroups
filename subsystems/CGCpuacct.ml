@@ -32,19 +32,19 @@ type stat = {
   system : int;
 }
 
-let stat_of_string s =
-  match List.map (Util.split ~seps:[' ']) (Util.split ~seps:['\n'] s) with
+let stat_converter = Converter.ro
+  (fun s -> match Converter.(read (list ~sep:'\n' (list ~sep:' ' string))) s with
   | [["user"; u]; ["system"; s]] ->
     { user = int_of_string u; system = int_of_string s}
-  | _ -> assert false
+  | _ -> assert false)
 
 (* Parameters *)
 
 let t = CGSubsystem.find "cpuacct"
 
-let stat = A.mk_get t "stat" stat_of_string
+let stat = A.mk_get t "stat" stat_converter
 
-let usage = A.mk_reset t "usage" Util.Get.int "0"
+let usage = A.mk_reset t "usage" Converter.int "0"
 
-let usage_percpu = A.mk_get t "usage_percpu" Util.Get.(list ~sep:' ' int)
+let usage_percpu = A.mk_get t "usage_percpu" Converter.(list ~sep:' ' int)
 

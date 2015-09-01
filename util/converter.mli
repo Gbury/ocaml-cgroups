@@ -24,18 +24,29 @@ OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 *)
 
-val t : CGSubsystem.t
+type ('ty, -'attr) t
+  constraint 'attr = [< `Read | `Write ]
 
-val cpus : (int list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val mems : (int list, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val memory_migrate : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val cpu_exclusive : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val mem_exclusive : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val mem_hardwall : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val memory_pressure : (int, [ `Read ], [ `Dummy ]) CGParameters.t
-val memory_pressure_enabled : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val memory_spread_page : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val memory_spread_slab : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val sched_load_balance : (bool, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
-val sched_relax_domain_level : (int, [ `Read | `Write ], [ `Dummy ]) CGParameters.t
+val ro : (string -> 'a) -> ('a, [ `Read ]) t
+val wo : ('a -> string) -> ('a, [ `Write ]) t
+val rw : (string -> 'a) -> ('a -> string) -> ('a, [ `Read | `Write ]) t
+
+val read : ('a, [> `Read ]) t -> string -> 'a
+val write : ('a, [> `Write ]) t -> 'a -> string
+
+val int : (int, [ `Read | `Write ]) t
+val bool : (bool, [ `Read | `Write ]) t
+val string : (string, [ `Read | `Write ]) t
+
+val pair : sep:char -> ('a, 'c) t -> ('b, 'c) t -> ('a * 'b, 'c) t
+val triple : sep:char -> ('a, 'd) t -> ('b, 'd) t -> ('c, 'd) t -> ('a * 'b * 'c, 'd) t
+
+val list : sep:char -> ('a, 'b) t -> ('a list, 'b) t
+
+val device : (int * int, [ `Read | `Write ]) t
+
+val range : (int list, [ `Read | `Write ]) t
+val single_range : (int * int, [ `Read | `Write ]) t
+
+val bounded_int : ?min:int -> ?max:int -> unit -> (int, [ `Read | `Write ]) t
 

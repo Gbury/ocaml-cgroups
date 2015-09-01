@@ -26,53 +26,52 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 let t = CGSubsystem.find "blkio"
 
-let get_devices = Util.Get.(list ~sep:'\n' (pair ~sep:' ' device int))
-let set_devices = Util.Set.(list ~sep:'\n' (pair ~sep:' ' device int))
+let devices = Converter.(list ~sep:'\n' (pair ~sep:' ' device int))
 
-let weight = CGParameters.mk_set t "weight" Util.Get.int (Util.Set.int ~min:100 ~max:1000)
+let weight = CGParameters.mk_set t "weight" (Converter.bounded_int ~min:100 ~max:1000 ())
 
-let weight_device = CGParameters.mk_set t "weight_device" get_devices set_devices
+let weight_device = CGParameters.mk_set t "weight_device" devices
 
-let throttle_read_bps_device = CGParameters.mk_set t "throttle.read_bps_device" get_devices set_devices
-let throttle_read_iops_device = CGParameters.mk_set t "throttle.read_iops_device" get_devices set_devices
-let throttle_write_bps_device = CGParameters.mk_set t "throttle.write_bps_device" get_devices set_devices
-let throttle_write_iops_device = CGParameters.mk_set t "throttle.write_iops_device" get_devices set_devices
+let throttle_read_bps_device = CGParameters.mk_set t "throttle.read_bps_device" devices
+let throttle_read_iops_device = CGParameters.mk_set t "throttle.read_iops_device" devices
+let throttle_write_bps_device = CGParameters.mk_set t "throttle.write_bps_device" devices
+let throttle_write_iops_device = CGParameters.mk_set t "throttle.write_iops_device" devices
 
 let throttle_io_serviced = CGParameters.mk_get t "throttle.io_serviced"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
 let throttle_io_service_bytes = CGParameters.mk_get t "throttle.io_service_bytes"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
-let reset_stats = CGParameters.mk_reset t "reset_stats" Util.Get.int "0"
+let reset_stats = CGParameters.mk_reset t "reset_stats" Converter.int "0"
 
-let time = CGParameters.mk_get t "time" get_devices
+let time = CGParameters.mk_get t "time" devices
 
-let sectors = CGParameters.mk_get t "sectors" get_devices
+let sectors = CGParameters.mk_get t "sectors" devices
 
-let avg_queue_size = CGParameters.mk_get t "avg_queue_size" Util.Get.int
+let avg_queue_size = CGParameters.mk_get t "avg_queue_size" Converter.int
 
-let group_wait_time = CGParameters.mk_get t "group_wait_time" Util.Get.int
+let group_wait_time = CGParameters.mk_get t "group_wait_time" Converter.int
 
-let empty_time = CGParameters.mk_get t "empty_time" Util.Get.int
+let empty_time = CGParameters.mk_get t "empty_time" Converter.int
 
-let idle_time = CGParameters.mk_get t "idle_time" Util.Get.int
+let idle_time = CGParameters.mk_get t "idle_time" Converter.int
 
 let io_serviced = CGParameters.mk_get t "io_serviced"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
 let io_service_bytes = CGParameters.mk_get t "io_service_bytes"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
 let io_service_time = CGParameters.mk_get t "io_service_time"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
 let wait_time = CGParameters.mk_get t "wait_time"
-    Util.Get.(list ~sep:'\n' (triple ~sep:' ' device string int))
+    Converter.(list ~sep:'\n' (triple ~sep:' ' device string int))
 
 let io_merged = CGParameters.mk_get t "io_merged"
-    Util.Get.(pair ~sep:' ' int string)
+    Converter.(pair ~sep:' ' int string)
 
 let io_queued = CGParameters.mk_get t "io_queued"
-    Util.Get.(pair ~sep:' ' int string)
+    Converter.(pair ~sep:' ' int string)
 
