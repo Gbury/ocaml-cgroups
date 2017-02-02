@@ -75,16 +75,16 @@ Hierarchy.add_process cpuacct_cgroup pid;
 
 (* We can get the total cpu time (in nanoseconds) used by all processes in
    a cgroup (and processes in the children of the cgroups, etc..) *)
-let _totat_cpu_time = Subsystem.Parameters.get Subsystem.Cpuacct.usage cpuacct_cgroup in
+let _totat_cpu_time = Subsystem.Param.get Subsystem.Cpuacct.usage cpuacct_cgroup in
 
 (* We can also get the memory used by tasks in the cgroup (strictly, i.e includes tasks
    in the cgroup but not tasks in children of the cgroup), etc ... *)
-let _memory_used = Subsystem.Parameters.get Subsystem.Memory.usage_in_bytes memory_cgroup in
+let _memory_used = Subsystem.Param.get Subsystem.Memory.usage_in_bytes memory_cgroup in
 
 (* We can set also limit memory usage to 1G *)
-Subsystem.Parameters.set Subsystem.Memory.limit_in_bytes memory_cgroup 1_000_000_000;
+Subsystem.Param.set Subsystem.Memory.limit_in_bytes memory_cgroup 1_000_000_000;
 (* This line limits RAM + Swap usage to 2G *)
-Subsystem.Parameters.set Subsystem.Memory.memsw_limit_in_bytes memory_cgroup 2_000_000_000;
+Subsystem.Param.set Subsystem.Memory.memsw_limit_in_bytes memory_cgroup 2_000_000_000;
 
 ```
 
