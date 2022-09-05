@@ -1,26 +1,20 @@
-opam-version: "1.2"
+opam-version: "2.0"
 name:"cgroups"
 license: "BSD"
 version: "dev"
 author: ["Guillaume Bury <guillaume.bury@gmail.com>"]
 maintainer: ["Guillaume Bury <guillaume.bury@gmail.com>"]
+synopsis: "Cgroups is an interface for control groups"
 build: [
-    [make "lib"]
-]
-install: [
-    [make "install"]
-]
-remove: [
-    [make "uninstall"]
+  ["dune" "build" "-p" name "-j" jobs]
 ]
 depends: [
-  "ocamlfind" {build}
+  "ocaml" { >= "4.02.1" }
+  "dune"
   "base-unix"
-  ]
-available: [
-  ocaml-version >= "4.02.1"
+  "odoc" { doc }
   ]
 tags: [ "cgroup" ]
 homepage: "https://github.com/Gbury/ocaml-cgroups"
-dev-repo: "https://github.com/Gbury/ocaml-cgroups.git"
+dev-repo: "git+https://github.com/Gbury/ocaml-cgroups.git"
 bug-reports: "https://github.com/Gbury/ocaml-cgroups/issues/"
