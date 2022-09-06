@@ -52,7 +52,7 @@ let rw read write = mk ~read ~write ()
 let bool = mk
     ~read:(function
     | "0" -> false | "1" -> true
-    | s -> _invalid_arg "bool")
+    | _s -> _invalid_arg "bool")
     ~write:(fun b -> if b then "1" else "0")
     ()
 
@@ -66,7 +66,7 @@ let bounded_int ?(min=min_int) ?(max=max_int) () = mk
           let i = int_of_string s in
           if i >= min && i <= max then i
           else _invalid_arg "int"
-        with Invalid_argument "string_of_int" ->
+        with Invalid_argument _ ->
           _invalid_arg"int")
     ~write:(fun i ->
         if i >= min && i <= max then
@@ -126,6 +126,6 @@ let range = mk
         List.flatten (List.map Util.range (read (list ~sep:',' single_range) s)))
     ~write:(fun l ->
         let l' = Util.compactify l in
-        write (list ',' single_range) l')
+        write (list ~sep:',' single_range) l')
     ()
 
